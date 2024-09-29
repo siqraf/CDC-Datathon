@@ -1,4 +1,4 @@
-﻿# CDC-Datathon
+﻿# Analyzing CO2 emissions from air travel & predicting trends
 ## Inspiration
 Climate change is one of the most pressing issues of our time, and understanding how global emissions contribute to it is crucial for taking effective action. We were inspired to build a tool that visualizes emissions data in a meaningful way, empowering individuals and policymakers to grasp the impact of carbon emissions. Additionally, we wanted to leverage machine learning to predict future trends, helping the world anticipate and mitigate future emissions.
 
