@@ -13,3 +13,6 @@ One of the biggest challenges was cleaning and merging the datasets to ensure ac
 
 ## Accomplishments that we're proud of
 We're proud of creating a user-friendly tool that not only displays global emissions but also forecasts future trends. The combination of interactive maps with machine learning-based predictions allows users to both explore the current state and prepare for what’s next. Successfully merging and analyzing large datasets while maintaining performance was another key accomplishment.
+
+## Note
+We were not able to upload the virtual environment files used by python for imports.
