@@ -6,11 +6,11 @@ import numpy as np
 import webbrowser
 import os
 
-# Load the CSV files
+
 df = pd.read_csv('emissionsData.csv', low_memory=False)
 df2 = pd.read_csv('world_population.csv', low_memory=False)
 
-# Clean column names in population data (strip any extra spaces)
+
 df2.columns = df2.columns.str.strip()
 
 # Convert the 'TIME' column to numeric, forcing errors to NaN
@@ -22,20 +22,13 @@ df = df.merge(df2[['Country', 'Population']], on='Country', how='left')
 # Create a new column 'EPC' (Emissions per Capita) by dividing 'Value' by 'Population'
 df['EPC'] = df['Value'] / df['Population']
 
-# Save the merged dataframe to a CSV file before the map generation
-df.to_csv('merged_emissions_population_data.csv', index=False)
-print('Merged data saved as "merged_emissions_population_data.csv".')
-
-# Filter the DataFrame where the FREQUENCY column is 'A' (Annual)
 filtered_df = df[df['FREQUENCY'] == 'A']
 
 # Group by LOCATION and TIME and sum the EPC column
 result_df_filtered = filtered_df.groupby(['LOCATION', 'TIME', 'Country'], as_index=False)['EPC'].sum()
 
-# Get the unique years we are interested in
 years = [2015, 2020, 2022]
 
-# GeoJSON data URL for world countries
 geojsonURL = 'https://raw.githubusercontent.com/python-visualization/folium/main/examples/data/world-countries.json'
 response = requests.get(geojsonURL)
 geoData = response.json()
@@ -47,7 +40,7 @@ def generate_map_for_year(year):
     
     # Merge the EPC data into the geojson data for tooltips
     for feature in geoData['features']:
-        loc = feature['id']  # LOCATION code
+        loc = feature['id'] 
         country_data = mapData[mapData['LOCATION'] == loc]
         if not country_data.empty:
             feature['properties']['EPC'] = round(country_data['EPC'].values[0], 4)
@@ -58,13 +51,10 @@ def generate_map_for_year(year):
     data_min = mapData['EPC'].min()
     data_max = mapData['EPC'].max()
     
-    # Create more bins with smaller ranges between 0 and 1
-    bins = [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 1, 2, 3, 10, 40, 53]
+    bins = [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 1, 2, 3, 10, 40, 106]
 
-    # Create a new map
     m = folium.Map(location=[20, 10], zoom_start=2)
     
-    # Add the choropleth map for the selected year
     folium.Choropleth(
         geo_data=geoData,
         name='choropleth',
@@ -73,20 +63,20 @@ def generate_map_for_year(year):
         key_on='feature.id',
         fill_color='RdYlGn_r',
         fill_opacity=0.7,
-        line_opacity=0.0,  # Disable default choropleth borders
+        line_opacity=0.0, 
         legend_name=f'Emissions per Capita in {year}',
-        bins=bins,  # Use customized bins
+        bins=bins, 
         reset=True
     ).add_to(m)
     
-    # Add hover functionality to display country name and EPC
+    # Add hover functionality
     folium.GeoJson(
         geoData,
         style_function=lambda feature: {
-            'fillColor': '#ffffff00',  # Transparent fill for hover
-            'color': 'black',  # Black border around countries
-            'weight': 2,  # Thick border
-            'fillOpacity': 0,  # No fill opacity for the borders
+            'fillColor': '#ffffff00', 
+            'color': 'black',  
+            'weight': 2,  
+            'fillOpacity': 0,
         },
         tooltip=folium.GeoJsonTooltip(
             fields=['name', 'EPC'],
@@ -99,13 +89,10 @@ def generate_map_for_year(year):
         )
     ).add_to(m)
     
-    # Save the map as an HTML file
     file_name = f'map_{year}_EPC.html'
     m.save(file_name)
     
-    # Open the generated HTML file in the default web browser
     webbrowser.open('file://' + os.path.realpath(file_name))
 
-# Generate maps for the years 2015, 2019, and 2022 using the EPC values and dynamic bins
 for year in years:
     generate_map_for_year(year)
